@@ -111,7 +111,7 @@ def _query_scalar(
 ) -> str:
     """Run a single-value query and return the result as a stripped string."""
     rows = run_query(config, sql, params=params, profile="production")
-    if rows and rows[0]:
+    if rows and rows[0] and rows[0][0] is not None:
         return str(rows[0][0]).strip()
     return "0"
 

@@ -67,7 +67,7 @@ class Lock:
             except (ValueError, OSError):
                 lock_pid = None
 
-            if lock_pid is not None and not _pid_alive(lock_pid):
+            if lock_pid is None or not _pid_alive(lock_pid):
                 log.warning(
                     "Removing stale lock for %s (pid=%s)", self.job_name, lock_pid
                 )

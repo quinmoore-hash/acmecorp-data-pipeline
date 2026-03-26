@@ -163,12 +163,13 @@ def run_etl(config: PipelineConfig) -> int:
     # Step 6: CSV transformation
     # ------------------------------------------------------------------
     _step_banner("CSV transformation")
-    transformed_files: list[Path] = []
+    # (transformed_file, original_source_in_input_dir)
+    transformed_files: list[tuple[Path, Path]] = []
 
     for csv_file in config.paths.input_dir.glob("*.csv"):
         out_file = config.paths.staging_dir / f"{csv_file.stem}_transformed.csv"
         if transform_csv(csv_file, out_file, delimiter=config.processing.csv_delimiter):
-            transformed_files.append(out_file)
+            transformed_files.append((out_file, csv_file))
         else:
             warnings.append(f"Transform failed: {csv_file.name}")
 
@@ -184,7 +185,7 @@ def run_etl(config: PipelineConfig) -> int:
             # Transform the converted CSV
             transformed = config.paths.staging_dir / f"{json_file.stem}_transformed.csv"
             if transform_csv(csv_out, transformed, delimiter=config.processing.csv_delimiter):
-                transformed_files.append(transformed)
+                transformed_files.append((transformed, json_file))
             csv_out.unlink(missing_ok=True)
         else:
             warnings.append(f"JSON conversion failed: {json_file.name}")
@@ -196,11 +197,10 @@ def run_etl(config: PipelineConfig) -> int:
     loaded = 0
     failed = 0
 
-    for tf in transformed_files:
+    for tf, src in transformed_files:
         if load_warehouse(tf, config):
             loaded += 1
-            # Move source to processed
-            src = config.paths.input_dir / tf.name.replace("_transformed", "")
+            # Move original source to processed
             if src.is_file():
                 src.rename(config.paths.processed_dir / src.name)
             tf.unlink(missing_ok=True)
