@@ -98,6 +98,7 @@ class DatabaseProfile:
 
 @dataclass
 class PathsConfig:
+    base_dir: Path = Path("/opt/acmecorp")
     input_dir: Path = Path("/opt/acmecorp/data/incoming")
     output_dir: Path = Path("/opt/acmecorp/data/processed")
     archive_dir: Path = Path("/opt/acmecorp/data/archive")
@@ -106,6 +107,11 @@ class PathsConfig:
     log_dir: Path = Path("/var/log/acmecorp/pipeline")
     backup_dir: Path = Path("/opt/acmecorp/backups/database")
     ftp_incoming_dir: Path = Path("/opt/acmecorp/data/ftp_incoming")
+
+    @property
+    def processed_dir(self) -> Path:
+        """Alias for ``output_dir`` used by several pipeline modules."""
+        return self.output_dir
 
 
 @dataclass
@@ -157,6 +163,7 @@ class ProcessingConfig:
     batch_size: int = 10000
     csv_delimiter: str = ","
     timestamp_format: str = "%Y-%m-%d %H:%M:%S"
+    archive_retention_days: int = 90
 
 
 @dataclass
