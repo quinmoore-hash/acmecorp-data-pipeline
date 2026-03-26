@@ -178,7 +178,7 @@ def run_ftp_sync(config: PipelineConfig) -> bool:
     for datafile in files:
         csv_output = config.paths.staging_dir / f"{datafile.stem}.csv"
         n = parse_fixed_width(datafile, csv_output)
-        if n < 0:
+        if n <= 0:
             success = False
         else:
             archive_file(datafile, config.paths.archive_dir)

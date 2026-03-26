@@ -18,7 +18,7 @@ class TestFixVendorA:
     def test_comma_decimal(self) -> None:
         rows = [{"order_total": "1.234,56", "state": "IL"}]
         result = _fix_vendor_a(rows, [])
-        assert result[0]["order_total"] == "1.234.56"
+        assert result[0]["order_total"] == "1234.56"
 
     def test_state_name_to_code(self) -> None:
         rows = [{"state": "California"}]
@@ -78,7 +78,7 @@ class TestFixVendorData:
         lines = output_file.read_text().splitlines()
         assert len(lines) == 3  # header + 2 rows
         # Verify comma-decimal was converted to dot-decimal
-        assert "1.234.56" in lines[1]
+        assert "1234.56" in lines[1]
 
     def test_unknown_vendor(self, tmp_path: Path) -> None:
         input_file = tmp_path / "in.csv"

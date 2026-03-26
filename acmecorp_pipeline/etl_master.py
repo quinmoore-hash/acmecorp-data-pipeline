@@ -277,8 +277,8 @@ def run_etl(config: PipelineConfig) -> int:
     log.info("\n%s", summary)
 
     if failed > 0 or dq_exit == 1:
-        alert(f"ETL {run_id} completed with errors:\n{summary}", "WARNING", config)
-        return 2
+        alert(f"ETL {run_id} completed with errors:\n{summary}", "CRITICAL", config)
+        return 1
     elif warnings:
         send_slack(f"ETL {run_id} completed with warnings:\n{summary}", "WARNING", config.slack)
         return 2

@@ -47,7 +47,7 @@ def _fix_vendor_a(rows: list[dict[str, str]], header: list[str]) -> list[dict[st
         # Fix comma decimals
         for field in ("order_total", "total_amount", "subtotal", "tax"):
             if field in row and "," in row[field]:
-                row[field] = row[field].replace(",", ".")
+                row[field] = row[field].replace(".", "").replace(",", ".")
 
         # Normalise state names
         if "state" in row:

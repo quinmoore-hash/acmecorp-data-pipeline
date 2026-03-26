@@ -65,7 +65,12 @@ def run_incremental_sync(config: PipelineConfig) -> int:
                 if datafile.suffix == ".csv":
                     ok = transform_csv(datafile, outfile, delimiter=config.processing.csv_delimiter)
                 elif datafile.suffix == ".json":
-                    ok = json_to_csv(datafile, outfile) >= 0
+                    csv_intermediate = staging_dir / f"{datafile.stem}.csv"
+                    if json_to_csv(datafile, csv_intermediate) >= 0:
+                        ok = transform_csv(csv_intermediate, outfile, delimiter=config.processing.csv_delimiter)
+                        csv_intermediate.unlink(missing_ok=True)
+                    else:
+                        ok = False
                 else:
                     continue
 
