@@ -92,7 +92,7 @@ def run_health_check(config: PipelineConfig) -> int:
         ("data", config.paths.base_dir),
         ("logs", config.paths.log_dir),
     ]:
-        status, pct = _check_disk(path)
+        status, pct = _check_disk(path, warn_pct=config.thresholds.disk_usage_warning, crit_pct=config.thresholds.disk_usage_critical)
         results.append((f"disk:{label}", status, f"{pct}% used"))
         if status == "CRITICAL":
             critical = True

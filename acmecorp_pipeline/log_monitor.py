@@ -121,7 +121,7 @@ def _scan_log_file(
             error_samples.extend(matches[:5])
 
     error_count = new_content.count("[ERROR]")
-    warn_count = new_content.count("[WARN]")
+    warn_count = new_content.count("[WARNING]")
 
     if errors_found > 0 or error_count > 10:
         alert_key = f"logmon_{logfile.name}"
