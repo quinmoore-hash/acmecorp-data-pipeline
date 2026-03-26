@@ -1,0 +1,12 @@
+customer_id,first_name,last_name,email,phone,company,address,city,state,zip,country,created_date,last_order_date,total_orders,lifetime_value,segment
+CUST-2001,John,Smith,jsmith@example.com,(555) 123-4567,,"123 Main St",Springfield,IL,62701,US,03/12/2021,01/16/2024,15,2450.75,gold
+CUST-2002,Jane,Doe,jane.doe@company.org,555.234.5678,Doe Enterprises,"456 Oak Ave",Portland,OR,97201,US,07/22/2020,01/18/2024,42,12890.30,platinum
+CUST-2003,N/A,N/A,procurement@acme.co,(555) 345-6789,Acme Industries,"789 Industrial Pkwy",Detroit,MI,48201,US,01/05/2019,01/17/2024,128,89450.00,enterprise
+CUST-2004,María,García,maria.g@email.com,555-456-7890,,"321 Elm St",Miami,FL,33101,US,11/30/2023,01/16/2024,2,299.98,new
+CUST-2005,NULL,NULL,orders@bobshw.com,(555) 567-8901,Bob's Hardware LLC,"654 Commerce Dr",Austin,TX,78701,US,06/15/2020,01/19/2024,67,34560.80,platinum
+CUST-2006,Sarah,Connor,sconnor@future.net,555 678 9012,,"987 Resistance Ave",Los Angeles,CA,90001,US,09/01/2022,01/17/2024,8,890.50,silver
+CUST-2007,,,,N/A,,Walk-in,,,,US,01/17/2024,01/17/2024,1,74.50,new
+CUST-2008,Ming,Li,liming@company.cn,+86-10-1234-5678,Shanghai Trading Co.,"88 Nanjing Road",Shanghai,,200001,CN,12/01/2023,01/18/2024,3,1350.00,international
+CUST-2009,Test,Account,test@test.com,000-000-0000,INTERNAL TEST,"Test Address",Test,TS,00000,US,01/01/2020,01/18/2024,0,0.00,test
+CUST-2010,Robert,Williams,info@williamsons.com,(555) 789-0123,Williams & Sons Co.,"100 Trade Center",Chicago,IL,60601,US,04/20/2021,01/19/2024,34,15670.25,gold
+CUST-2011,Rachel,Green,rgreen@central.perk,555-890-1234,,"90 Bedford St",New York,NY,10014,US,10/15/2023,01/19/2024,5,750.00,silver

@@ -1,0 +1,16 @@
+order_id,customer_id,customer_name,email,phone,product_code,quantity,unit_price,total_amount,order_date,ship_date,status,payment_method,shipping_address,notes
+ORD-10001,CUST-2001,John Smith,jsmith@example.com,(555) 123-4567,PROD-A100,3,29.99,89.97,01/15/2024,01/18/2024,shipped,credit_card,"123 Main St, Springfield, IL 62701",
+ORD-10002,CUST-2002,Jane Doe,jane.doe@company.org,555.234.5678,PROD-B200,1,149.99,149.99,01/15/2024,01/17/2024,delivered,purchase_order,"456 Oak Ave, Portland, OR 97201",Priority shipping requested
+ORD-10003,CUST-2003,Acme Industries,procurement@acme.co,(555) 345-6789,PROD-A100,50,29.99,1499.50,01/15/2024,,processing,invoice,"789 Industrial Pkwy, Detroit, MI 48201",Bulk order - volume discount applied
+ORD-10004,CUST-2001,John Smith,jsmith@example.com,(555) 123-4567,PROD-C300,2,74.50,149.00,01/16/2024,01/19/2024,shipped,credit_card,"123 Main St, Springfield, IL 62701",
+ORD-10005,CUST-2004,María García,maria.g@email.com,555-456-7890,PROD-B200,1,149.99,149.99,01/16/2024,NULL,pending,credit_card,"321 Elm St, Miami, FL 33101",
+ORD-10006,CUST-2005,Bob's Hardware LLC,orders@bobshw.com,(555) 567-8901,PROD-D400,10,19.99,199.90,01/16/2024,01/18/2024,shipped,purchase_order,"654 Commerce Dr, Austin, TX 78701",NET30 terms
+ORD-10007,CUST-2006,Sarah Connor,sconnor@future.net,555 678 9012,PROD-A100,1,29.99,29.99,01/17/2024,01/20/2024,delivered,credit_card,"987 Resistance Ave, Los Angeles, CA 90001",
+ORD-10008,CUST-2003,Acme Industries,procurement@acme.co,(555) 345-6789,PROD-E500,5,299.99,1499.95,01/17/2024,,processing,invoice,"789 Industrial Pkwy, Detroit, MI 48201",Expedited - need by 01/22
+ORD-10009,CUST-2007,N/A,none,N/A,PROD-C300,1,74.50,74.50,01/17/2024,01/19/2024,shipped,cash,"Walk-in customer, Store #42",Walk-in sale - no customer record
+ORD-10010,CUST-2008,李明,liming@company.cn,+86-10-1234-5678,PROD-B200,3,149.99,449.97,01/18/2024,,pending,wire_transfer,"International order - Shanghai warehouse",International shipment - customs docs needed
+ORD-10011,CUST-2002,Jane Doe,jane.doe@company.org,555.234.5678,PROD-A100,10,29.99,299.90,01/18/2024,01/21/2024,shipped,purchase_order,"456 Oak Ave, Portland, OR 97201",Reorder
+ORD-10012,CUST-2009,Test Account,test@test.com,000-000-0000,PROD-A100,1,29.99,29.99,01/18/2024,,cancelled,credit_card,"Test Address",TEST ORDER - DO NOT SHIP
+ORD-10013,CUST-2010,Williams & Sons Co.,info@williamsons.com,(555) 789-0123,PROD-D400,25,19.99,499.75,01/19/2024,01/22/2024,shipped,invoice,"100 Trade Center, Chicago, IL 60601",
+ORD-10014,CUST-2005,Bob's Hardware LLC,orders@bobshw.com,(555) 567-8901,PROD-A100,100,29.99,2999.00,01/19/2024,,processing,purchase_order,"654 Commerce Dr, Austin, TX 78701",Large order - need delivery confirmation
+ORD-10015,CUST-2011,Rachel Green,rgreen@central.perk,555-890-1234,PROD-E500,1,299.99,299.99,01/19/2024,01/22/2024,delivered,credit_card,"90 Bedford St, New York, NY 10014",Gift wrap requested

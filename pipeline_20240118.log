@@ -1,0 +1,115 @@
+[2024-01-18 02:00:01] [INFO] [scripts/etl_master.sh:248] ==========================================
+[2024-01-18 02:00:01] [INFO] [scripts/etl_master.sh:249] Starting ETL Pipeline: ETL_20240118_020001
+[2024-01-18 02:00:01] [INFO] [scripts/etl_master.sh:250] Host: prod-etl-01.acmecorp.internal
+[2024-01-18 02:00:01] [INFO] [scripts/etl_master.sh:251] Date: Thu Jan 18 02:00:01 EST 2024
+[2024-01-18 02:00:01] [INFO] [scripts/etl_master.sh:252] ==========================================
+[2024-01-18 02:00:02] [INFO] [utils/lock_manager.sh:18] Acquired lock: etl_master (pid=24531)
+[2024-01-18 02:00:02] [INFO] [scripts/etl_master.sh:82] Checking prerequisites...
+[2024-01-18 02:00:03] [INFO] [utils/db_helpers.sh:72] Database connection OK (profile=production)
+[2024-01-18 02:00:03] [INFO] [scripts/etl_master.sh:101] Prerequisites check passed
+[2024-01-18 02:00:03] [INFO] [scripts/etl_master.sh:107] [Step 1/6] Fetching API data...
+[2024-01-18 02:00:04] [INFO] [scripts/fetch_api_data.sh:55] Fetching vendor-a/orders -> /opt/acmecorp/data/incoming/vendor-a_orders_20240118.json
+[2024-01-18 02:00:18] [INFO] [scripts/fetch_api_data.sh:112] Fetched 1247 records from vendor-a/orders
+[2024-01-18 02:00:19] [INFO] [scripts/fetch_api_data.sh:55] Fetching vendor-a/inventory -> /opt/acmecorp/data/incoming/vendor-a_inventory_20240118.json
+[2024-01-18 02:00:31] [INFO] [scripts/fetch_api_data.sh:112] Fetched 856 records from vendor-a/inventory
+[2024-01-18 02:00:32] [INFO] [scripts/fetch_api_data.sh:55] Fetching vendor-b/transactions -> /opt/acmecorp/data/incoming/vendor-b_transactions_20240118.json
+[2024-01-18 02:00:45] [WARN] [scripts/fetch_api_data.sh:72] API returned HTTP 503, retrying in 10s...
+[2024-01-18 02:00:58] [INFO] [scripts/fetch_api_data.sh:112] Fetched 3421 records from vendor-b/transactions
+[2024-01-18 02:00:59] [INFO] [scripts/fetch_api_data.sh:55] Fetching vendor-c/shipments -> /opt/acmecorp/data/incoming/vendor-c_shipments_20240118.json
+[2024-01-18 02:01:08] [INFO] [scripts/fetch_api_data.sh:112] Fetched 512 records from vendor-c/shipments
+[2024-01-18 02:01:08] [INFO] [scripts/etl_master.sh:131] [Step 1/6] API fetch complete
+[2024-01-18 02:01:08] [INFO] [scripts/etl_master.sh:135] [Step 2/6] Collecting file drops...
+[2024-01-18 02:01:09] [INFO] [scripts/etl_master.sh:142] Found 3 new CSV files from FTP
+[2024-01-18 02:01:09] [INFO] [scripts/etl_master.sh:146] Collected: legacy_orders_20240118.csv
+[2024-01-18 02:01:09] [INFO] [scripts/etl_master.sh:146] Collected: customer_update_20240118.csv
+[2024-01-18 02:01:10] [INFO] [scripts/etl_master.sh:146] Collected: product_feed_20240118.csv
+[2024-01-18 02:01:11] [INFO] [scripts/etl_master.sh:157] Checking S3 for new files...
+[2024-01-18 02:01:14] [INFO] [scripts/etl_master.sh:165] Downloaded from S3: partner_data_20240118.csv
+[2024-01-18 02:01:14] [INFO] [scripts/etl_master.sh:170] [Step 2/6] File collection complete
+[2024-01-18 02:01:14] [INFO] [scripts/etl_master.sh:174] [Step 3/6] Validating incoming data...
+[2024-01-18 02:01:15] [INFO] [utils/file_utils.sh:72] CSV validation passed: legacy_orders_20240118.csv (7 columns)
+[2024-01-18 02:01:15] [INFO] [utils/file_utils.sh:72] CSV validation passed: customer_update_20240118.csv (16 columns)
+[2024-01-18 02:01:15] [WARN] [utils/file_utils.sh:68] Inconsistent column counts at lines: 45 87
+[2024-01-18 02:01:15] [ERROR] [utils/file_utils.sh:64] CSV column mismatch: expected 12, got 13 in product_feed_20240118.csv
+[2024-01-18 02:01:16] [INFO] [utils/file_utils.sh:80] JSON validation passed: vendor-a_orders_20240118.json
+[2024-01-18 02:01:16] [INFO] [utils/file_utils.sh:80] JSON validation passed: vendor-a_inventory_20240118.json
+[2024-01-18 02:01:16] [INFO] [utils/file_utils.sh:80] JSON validation passed: vendor-b_transactions_20240118.json
+[2024-01-18 02:01:16] [INFO] [utils/file_utils.sh:80] JSON validation passed: vendor-c_shipments_20240118.json
+[2024-01-18 02:01:16] [WARN] [scripts/etl_master.sh:198] Validation completed with 1 errors
+[2024-01-18 02:01:16] [INFO] [scripts/etl_master.sh:201] [Step 3/6] Validation complete
+[2024-01-18 02:01:17] [INFO] [scripts/etl_master.sh:204] [Step 4/6] Transforming data...
+[2024-01-18 02:01:18] [INFO] [scripts/transform_csv.sh:62] Transforming: legacy_orders_20240118.csv
+[2024-01-18 02:01:20] [INFO] [scripts/transform_csv.sh:85] Transform complete: legacy_orders_20240118_transformed.csv (342 rows)
+[2024-01-18 02:01:20] [INFO] [scripts/transform_csv.sh:62] Transforming: customer_update_20240118.csv
+[2024-01-18 02:01:21] [INFO] [scripts/transform_csv.sh:85] Transform complete: customer_update_20240118_transformed.csv (128 rows)
+[2024-01-18 02:01:22] [INFO] [scripts/json_to_csv.sh:40] Converting JSON to CSV: vendor-a_orders_20240118.json
+[2024-01-18 02:01:24] [INFO] [scripts/json_to_csv.sh:58] Converted vendor-a_orders_20240118.json -> CSV (1247 rows)
+[2024-01-18 02:01:24] [INFO] [scripts/json_to_csv.sh:40] Converting JSON to CSV: vendor-a_inventory_20240118.json
+[2024-01-18 02:01:25] [INFO] [scripts/json_to_csv.sh:58] Converted vendor-a_inventory_20240118.json -> CSV (856 rows)
+[2024-01-18 02:01:26] [INFO] [scripts/json_to_csv.sh:40] Converting JSON to CSV: vendor-b_transactions_20240118.json
+[2024-01-18 02:01:28] [INFO] [scripts/json_to_csv.sh:58] Converted vendor-b_transactions_20240118.json -> CSV (3421 rows)
+[2024-01-18 02:01:29] [INFO] [scripts/json_to_csv.sh:40] Converting JSON to CSV: vendor-c_shipments_20240118.json
+[2024-01-18 02:01:30] [INFO] [scripts/json_to_csv.sh:58] Converted vendor-c_shipments_20240118.json -> CSV (512 rows)
+[2024-01-18 02:01:30] [INFO] [scripts/etl_master.sh:230] [Step 4/6] Transform complete. Total rows: 6506
+[2024-01-18 02:01:30] [INFO] [scripts/etl_master.sh:234] [Step 5/6] Loading data into warehouse...
+[2024-01-18 02:01:31] [INFO] [scripts/load_warehouse.sh:45] Loading legacy_orders_20240118_transformed.csv -> raw_ingest.vendor_a_orders
+[2024-01-18 02:01:35] [INFO] [scripts/load_warehouse.sh:88] Loaded 342 rows into raw_ingest.vendor_a_orders (total: 445621)
+[2024-01-18 02:01:36] [INFO] [scripts/load_warehouse.sh:45] Loading customer_update_20240118_transformed.csv -> raw_ingest.customer_data
+[2024-01-18 02:01:38] [INFO] [scripts/load_warehouse.sh:88] Loaded 128 rows into raw_ingest.customer_data (total: 34219)
+[2024-01-18 02:01:39] [INFO] [scripts/load_warehouse.sh:45] Loading vendor-a_orders_20240118_transformed.csv -> raw_ingest.vendor_a_orders
+[2024-01-18 02:01:44] [INFO] [scripts/load_warehouse.sh:88] Loaded 1247 rows into raw_ingest.vendor_a_orders (total: 446868)
+[2024-01-18 02:01:45] [INFO] [scripts/load_warehouse.sh:45] Loading vendor-a_inventory_20240118_transformed.csv -> raw_ingest.vendor_a_inventory
+[2024-01-18 02:01:48] [INFO] [scripts/load_warehouse.sh:88] Loaded 856 rows into raw_ingest.vendor_a_inventory (total: 189432)
+[2024-01-18 02:01:49] [INFO] [scripts/load_warehouse.sh:45] Loading vendor-b_transactions_20240118_transformed.csv -> raw_ingest.vendor_b_transactions
+[2024-01-18 02:01:58] [INFO] [scripts/load_warehouse.sh:88] Loaded 3421 rows into raw_ingest.vendor_b_transactions (total: 1205843)
+[2024-01-18 02:01:59] [INFO] [scripts/load_warehouse.sh:45] Loading vendor-c_shipments_20240118_transformed.csv -> raw_ingest.vendor_c_shipments
+[2024-01-18 02:02:02] [INFO] [scripts/load_warehouse.sh:88] Loaded 512 rows into raw_ingest.vendor_c_shipments (total: 98754)
+[2024-01-18 02:02:02] [INFO] [scripts/etl_master.sh:247] [Step 5/6] Warehouse load complete
+[2024-01-18 02:02:02] [INFO] [scripts/etl_master.sh:250] [Step 6/6] Archiving processed files...
+[2024-01-18 02:02:03] [INFO] [utils/file_utils.sh:38] Archived: legacy_orders_20240118.csv -> /opt/acmecorp/data/archive/legacy_orders_20240118_20240118_020203.csv
+[2024-01-18 02:02:03] [INFO] [utils/file_utils.sh:38] Archived: customer_update_20240118.csv -> /opt/acmecorp/data/archive/customer_update_20240118_20240118_020203.csv
+[2024-01-18 02:02:04] [INFO] [utils/file_utils.sh:38] Archived: vendor-a_orders_20240118.json -> /opt/acmecorp/data/archive/vendor-a_orders_20240118_20240118_020204.json
+[2024-01-18 02:02:04] [INFO] [utils/file_utils.sh:38] Archived: vendor-a_inventory_20240118.json -> /opt/acmecorp/data/archive/vendor-a_inventory_20240118_20240118_020204.json
+[2024-01-18 02:02:05] [INFO] [utils/file_utils.sh:38] Archived: vendor-b_transactions_20240118.json -> /opt/acmecorp/data/archive/vendor-b_transactions_20240118_20240118_020205.json
+[2024-01-18 02:02:05] [INFO] [utils/file_utils.sh:38] Archived: vendor-c_shipments_20240118.json -> /opt/acmecorp/data/archive/vendor-c_shipments_20240118_20240118_020205.json
+[2024-01-18 02:02:08] [INFO] [scripts/etl_master.sh:270] [Step 6/6] Archive complete
+[2024-01-18 02:02:08] [INFO] [scripts/etl_master.sh:274] Running post-load validation...
+[2024-01-18 02:02:09] [INFO] [scripts/data_quality_check.sh:55] Starting Data Quality Checks: ETL_20240118_020001
+[2024-01-18 02:02:10] [INFO] [scripts/data_quality_check.sh:62] Running row count checks...
+[2024-01-18 02:02:15] [INFO] [scripts/data_quality_check.sh:95] DQ [PASS] row_count:raw_ingest.vendor_a_orders: Row count OK (today: 1589, avg: 1523, dev: 4%)
+[2024-01-18 02:02:16] [INFO] [scripts/data_quality_check.sh:95] DQ [PASS] row_count:raw_ingest.vendor_a_inventory: Row count OK (today: 856, avg: 831, dev: 3%)
+[2024-01-18 02:02:17] [INFO] [scripts/data_quality_check.sh:95] DQ [PASS] row_count:raw_ingest.vendor_b_transactions: Row count OK (today: 3421, avg: 3287, dev: 4%)
+[2024-01-18 02:02:18] [INFO] [scripts/data_quality_check.sh:95] DQ [PASS] row_count:raw_ingest.vendor_c_shipments: Row count OK (today: 512, avg: 498, dev: 2%)
+[2024-01-18 02:02:19] [INFO] [scripts/data_quality_check.sh:95] DQ [PASS] row_count:raw_ingest.customer_data: Row count OK (today: 128, avg: 115, dev: 11%)
+[2024-01-18 02:02:20] [INFO] [scripts/data_quality_check.sh:95] DQ [WARN] row_count:raw_ingest.product_catalog: No data today and no historical baseline
+[2024-01-18 02:02:20] [INFO] [scripts/data_quality_check.sh:102] Running null rate checks...
+[2024-01-18 02:02:28] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_a_orders.order_id: Null rate 0.00% within threshold 0%
+[2024-01-18 02:02:29] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_a_orders.customer_id: Null rate 0.00% within threshold 0%
+[2024-01-18 02:02:30] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_a_orders.order_date: Null rate 0.00% within threshold 0%
+[2024-01-18 02:02:31] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_a_orders.total_amount: Null rate 0.12% within threshold 5%
+[2024-01-18 02:02:32] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_b_transactions.transaction_id: Null rate 0.00% within threshold 0%
+[2024-01-18 02:02:33] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_b_transactions.amount: Null rate 0.00% within threshold 0%
+[2024-01-18 02:02:34] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.vendor_c_shipments.shipment_id: Null rate 0.00% within threshold 0%
+[2024-01-18 02:02:35] [INFO] [scripts/data_quality_check.sh:130] DQ [WARN] null_rate:raw_ingest.vendor_c_shipments.tracking_number: Null rate 12.50% exceeds threshold 10%
+[2024-01-18 02:02:36] [INFO] [scripts/data_quality_check.sh:130] DQ [PASS] null_rate:raw_ingest.customer_data.email: Null rate 2.34% within threshold 5%
+[2024-01-18 02:02:37] [INFO] [scripts/data_quality_check.sh:140] Running duplicate checks...
+[2024-01-18 02:02:40] [INFO] [scripts/data_quality_check.sh:160] DQ [PASS] duplicates:raw_ingest.vendor_a_orders.order_id: No duplicates found
+[2024-01-18 02:02:41] [INFO] [scripts/data_quality_check.sh:160] DQ [PASS] duplicates:raw_ingest.vendor_b_transactions.transaction_id: No duplicates found
+[2024-01-18 02:02:42] [INFO] [scripts/data_quality_check.sh:160] DQ [PASS] duplicates:raw_ingest.vendor_c_shipments.shipment_id: No duplicates found
+[2024-01-18 02:02:42] [INFO] [scripts/data_quality_check.sh:165] Running freshness checks...
+[2024-01-18 02:02:45] [INFO] [scripts/data_quality_check.sh:180] DQ [PASS] freshness:raw_ingest.vendor_a_orders: Data loaded today
+[2024-01-18 02:02:46] [INFO] [scripts/data_quality_check.sh:180] DQ [PASS] freshness:raw_ingest.vendor_b_transactions: Data loaded today
+[2024-01-18 02:02:47] [INFO] [scripts/data_quality_check.sh:180] DQ [PASS] freshness:raw_ingest.vendor_c_shipments: Data loaded today
+[2024-01-18 02:02:47] [INFO] [scripts/data_quality_check.sh:190] Running business rule checks...
+[2024-01-18 02:02:50] [INFO] [scripts/data_quality_check.sh:210] DQ [PASS] biz_rule:negative_amounts: No negative amounts
+[2024-01-18 02:02:51] [INFO] [scripts/data_quality_check.sh:210] DQ [PASS] biz_rule:future_ship_dates: No future ship dates
+[2024-01-18 02:02:52] [INFO] [scripts/data_quality_check.sh:210] DQ [WARN] biz_rule:amount_outliers: 2 transactions over $1M threshold
+[2024-01-18 02:02:52] [INFO] [scripts/data_quality_check.sh:230] DQ Report written to: /var/log/acmecorp/pipeline/dq_report_20240118.txt
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:52] ==========================================
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:53] ETL Run Summary: ETL_20240118_020001
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:54] Duration: 172s
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:55] Steps Completed: 6
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:56] Steps Failed: 0
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:57] Total Rows: 6506
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:58] ==========================================
+[2024-01-18 02:02:53] [INFO] [scripts/etl_master.sh:68] ETL ETL_20240118_020001 completed successfully

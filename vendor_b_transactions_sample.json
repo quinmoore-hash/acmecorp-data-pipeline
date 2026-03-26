@@ -1,0 +1,122 @@
+[
+  {
+    "transaction_id": "TXN-80001",
+    "account_id": "ACC-3001",
+    "transaction_type": "purchase",
+    "amount": 1250.00,
+    "currency": "USD",
+    "timestamp": "2024-01-15T09:23:45Z",
+    "merchant_name": "Office Supplies Plus",
+    "category": "office_supplies",
+    "status": "completed",
+    "reference_number": "REF-20240115-001"
+  },
+  {
+    "transaction_id": "TXN-80002",
+    "account_id": "ACC-3001",
+    "transaction_type": "refund",
+    "amount": -89.99,
+    "currency": "USD",
+    "timestamp": "2024-01-15T10:05:12Z",
+    "merchant_name": "Office Supplies Plus",
+    "category": "office_supplies",
+    "status": "completed",
+    "reference_number": "REF-20240115-002"
+  },
+  {
+    "transaction_id": "TXN-80003",
+    "account_id": "ACC-3002",
+    "transaction_type": "purchase",
+    "amount": 5499.99,
+    "currency": "USD",
+    "timestamp": "2024-01-15T11:30:00Z",
+    "merchant_name": "TechParts Global",
+    "category": "technology",
+    "status": "completed",
+    "reference_number": "REF-20240115-003"
+  },
+  {
+    "transaction_id": "TXN-80004",
+    "account_id": "ACC-3003",
+    "transaction_type": "purchase",
+    "amount": 320.50,
+    "currency": "USD",
+    "timestamp": "2024-01-15T14:22:33Z",
+    "merchant_name": "Industrial Fasteners Inc",
+    "category": "manufacturing",
+    "status": "pending",
+    "reference_number": "REF-20240115-004"
+  },
+  {
+    "transaction_id": "TXN-80005",
+    "account_id": "ACC-3002",
+    "transaction_type": "purchase",
+    "amount": 15750.00,
+    "currency": "USD",
+    "timestamp": "2024-01-16T08:15:00Z",
+    "merchant_name": "CloudHost Services",
+    "category": "technology",
+    "status": "completed",
+    "reference_number": "REF-20240116-001"
+  },
+  {
+    "transaction_id": "TXN-80006",
+    "account_id": "ACC-3004",
+    "transaction_type": "purchase",
+    "amount": 42.99,
+    "currency": "USD",
+    "timestamp": "2024-01-16T09:45:20Z",
+    "merchant_name": "Quick Print Shop",
+    "category": "office_supplies",
+    "status": "completed",
+    "reference_number": "REF-20240116-002"
+  },
+  {
+    "transaction_id": "TXN-80007",
+    "account_id": "ACC-3001",
+    "transaction_type": "wire_transfer",
+    "amount": 250000.00,
+    "currency": "USD",
+    "timestamp": "2024-01-16T13:00:00Z",
+    "merchant_name": "Vendor Payment - Q1",
+    "category": "vendor_payment",
+    "status": "completed",
+    "reference_number": "REF-20240116-003"
+  },
+  {
+    "transaction_id": "TXN-80008",
+    "account_id": "ACC-3005",
+    "transaction_type": "purchase",
+    "amount": 899.00,
+    "currency": "EUR",
+    "timestamp": "2024-01-17T07:30:15Z",
+    "merchant_name": "EuroTech GmbH",
+    "category": "technology",
+    "status": "completed",
+    "reference_number": "REF-20240117-001"
+  },
+  {
+    "transaction_id": "TXN-80009",
+    "account_id": "ACC-3003",
+    "transaction_type": "purchase",
+    "amount": 0.00,
+    "currency": "USD",
+    "timestamp": "2024-01-17T10:00:00Z",
+    "merchant_name": "Free Trial Subscription",
+    "category": "software",
+    "status": "completed",
+    "reference_number": "REF-20240117-002"
+  },
+  {
+    "transaction_id": "TXN-80010",
+    "account_id": "ACC-3002",
+    "transaction_type": "chargeback",
+    "amount": -5499.99,
+    "currency": "USD",
+    "timestamp": "2024-01-18T16:45:00Z",
+    "merchant_name": "TechParts Global",
+    "category": "technology",
+    "status": "disputed",
+    "reference_number": "REF-20240118-001"
+  }
+]

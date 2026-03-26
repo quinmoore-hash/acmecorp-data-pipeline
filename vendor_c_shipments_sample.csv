@@ -1,0 +1,13 @@
+shipment_id,order_reference,tracking_number,carrier,ship_date,delivery_date,origin_warehouse,destination_address,weight_lbs,dimensions,status,special_instructions
+SHP-50001,ORD-10001,1Z999AA10123456784,UPS,15-Jan-2024,18-Jan-2024,WH-EAST,"123 Main St, Springfield, IL 62701",4.2,12x8x6,delivered,
+SHP-50002,ORD-10002,9400111899223100001,USPS,15-Jan-2024,17-Jan-2024,WH-WEST,"456 Oak Ave, Portland, OR 97201",2.1,10x6x4,delivered,Leave at door
+SHP-50003,ORD-10004,1Z999AA10123456785,UPS,16-Jan-2024,19-Jan-2024,WH-EAST,"123 Main St, Springfield, IL 62701",6.8,15x10x8,delivered,
+SHP-50004,ORD-10006,794644790132,FEDEX,16-Jan-2024,18-Jan-2024,WH-SOUTH,"654 Commerce Dr, Austin, TX 78701",15.3,24x18x12,delivered,Dock delivery - call ahead
+SHP-50005,ORD-10007,1Z999AA10123456786,UPS,17-Jan-2024,20-Jan-2024,WH-WEST,"987 Resistance Ave, Los Angeles, CA 90001",1.5,8x6x4,delivered,
+SHP-50006,ORD-10009,794644790133,FEDEX,17-Jan-2024,19-Jan-2024,WH-EAST,"Store #42 - Pickup Counter",3.2,10x8x6,delivered,Hold for pickup
+SHP-50007,ORD-10011,1Z999AA10123456787,UPS,18-Jan-2024,21-Jan-2024,WH-WEST,"456 Oak Ave, Portland, OR 97201",22.0,30x20x15,delivered,
+SHP-50008,ORD-10013,794644790134,FEDEX,19-Jan-2024,22-Jan-2024,WH-EAST,"100 Trade Center, Chicago, IL 60601",18.5,24x18x12,in_transit,
+SHP-50009,ORD-10015,9400111899223100002,USPS,19-Jan-2024,22-Jan-2024,WH-EAST,"90 Bedford St, New York, NY 10014",4.0,12x10x8,delivered,GIFT WRAP - include card
+SHP-50010,ORD-10003,PENDING,TBD,,,WH-EAST,"789 Industrial Pkwy, Detroit, MI 48201",125.0,48x36x24,pending,"Freight shipment - LTL required, pallet"
+SHP-50011,ORD-10008,PENDING,TBD,,,WH-EAST,"789 Industrial Pkwy, Detroit, MI 48201",45.0,36x24x18,pending,Expedited freight requested
+SHP-50012,ORD-10014,PENDING,FEDEX_FREIGHT,,,"WH-SOUTH","654 Commerce Dr, Austin, TX 78701",200.0,48x40x36,pending,Full pallet - dock delivery
