@@ -6,6 +6,7 @@ Replaces ``db_backup.sh``.  Uses :mod:`subprocess` to invoke
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import time
@@ -53,7 +54,7 @@ def _pg_dump_table(
 
     try:
         with open(output_file, "wb") as out, open(log_file, "a") as err:
-            result = subprocess.run(cmd, stdout=out, stderr=err, env={**dict(__import__("os").environ), **env})
+            result = subprocess.run(cmd, stdout=out, stderr=err, env={**os.environ, **env})
         return result.returncode == 0
     except OSError as exc:
         log.error("pg_dump failed for %s: %s", table, exc)
@@ -86,7 +87,7 @@ def _pg_dump_full(
 
     try:
         with open(output_file, "wb") as out, open(log_file, "a") as err:
-            result = subprocess.run(cmd, stdout=out, stderr=err, env={**dict(__import__("os").environ), **env})
+            result = subprocess.run(cmd, stdout=out, stderr=err, env={**os.environ, **env})
         return result.returncode == 0
     except OSError as exc:
         log.error("Full pg_dump failed: %s", exc)
@@ -201,7 +202,7 @@ def run_backup(config: PipelineConfig, full: bool = False) -> bool:
 def main() -> None:
     """CLI entry point matching original ``db_backup.sh`` interface."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     full = "--full" in sys.argv
     ok = run_backup(cfg, full=full)

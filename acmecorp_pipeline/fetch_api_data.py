@@ -7,6 +7,7 @@ and writes well-formed JSON output.
 from __future__ import annotations
 
 import json
+import os
 import time
 from base64 import b64encode
 from datetime import date
@@ -36,8 +37,6 @@ VENDOR_CONFIGS: dict[str, dict[str, Any]] = {
     "vendor-c": {
         "base_url": "https://portal.vendor-c.net/export",
         "auth_type": "basic",
-        "basic_user": "acme",
-        "basic_pass": "v3nd0rC_2023",
         "page_size": 200,
     },
 }
@@ -56,8 +55,10 @@ def _build_headers(
     elif auth_type == "bearer":
         headers["Authorization"] = f"Bearer {api_key}"
     elif auth_type == "basic":
+        basic_user = os.environ.get("VENDOR_C_BASIC_USER", "")
+        basic_pass = os.environ.get("VENDOR_C_BASIC_PASS", "")
         token = b64encode(
-            f"{vendor_cfg['basic_user']}:{vendor_cfg['basic_pass']}".encode()
+            f"{basic_user}:{basic_pass}".encode()
         ).decode()
         headers["Authorization"] = f"Basic {token}"
 
@@ -171,7 +172,7 @@ def main() -> None:
     output_file = Path(sys.argv[3])
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     result = fetch_api_data(vendor, endpoint, output_file, cfg)
     sys.exit(0 if result >= 0 else 1)

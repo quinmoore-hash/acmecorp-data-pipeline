@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import csv
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Optional
@@ -30,11 +31,21 @@ TABLE_MAP: dict[str, str] = {
 }
 
 
+# Set of allowed target table names (values from TABLE_MAP).
+_ALLOWED_TABLES = frozenset(TABLE_MAP.values())
+
+
+def _validate_table(table: str) -> str:
+    """Ensure *table* is in the known allowlist; raise ValueError otherwise."""
+    if table not in _ALLOWED_TABLES:
+        raise ValueError(f"Table not in allowlist: {table!r}")
+    return table
+
+
 def _detect_target_table(filename: str) -> Optional[str]:
     """Determine the target table from a filename pattern."""
     # Strip _transformed.csv and trailing date stamps
     basename = filename.replace("_transformed.csv", "")
-    import re
     basename = re.sub(r"_\d+$", "", basename)
 
     for pattern, table in TABLE_MAP.items():
@@ -77,6 +88,7 @@ def load_warehouse(
             log.error("Cannot determine target table for: %s", input_file.name)
             return False
 
+    _validate_table(target_table)
     log.info("Loading %s -> %s", input_file.name, target_table)
 
     # Get pre-load row count
@@ -139,7 +151,7 @@ def main() -> None:
     target_table = sys.argv[2] if len(sys.argv) > 2 else None
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     ok = load_warehouse(input_file, cfg, target_table)
     sys.exit(0 if ok else 1)

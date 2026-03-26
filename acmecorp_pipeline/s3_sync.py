@@ -14,19 +14,21 @@ from acmecorp_pipeline.logging_utils import get_logger, setup_logging
 
 log = get_logger("s3_sync")
 
-# Lazy-loaded boto3 client
+# Lazy-loaded boto3 client; invalidated when the configured region changes.
 _s3_client = None
+_s3_client_region: str | None = None
 
 
 def _get_s3_client(config: PipelineConfig):
-    """Return a cached boto3 S3 client."""
-    global _s3_client
-    if _s3_client is None:
+    """Return a cached boto3 S3 client, re-creating it if the region changed."""
+    global _s3_client, _s3_client_region
+    if _s3_client is None or _s3_client_region != config.s3.region:
         import boto3
         _s3_client = boto3.client(
             "s3",
             region_name=config.s3.region,
         )
+        _s3_client_region = config.s3.region
     return _s3_client
 
 
@@ -194,7 +196,7 @@ def main() -> None:
         sys.exit(1)
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     action = sys.argv[1]
 

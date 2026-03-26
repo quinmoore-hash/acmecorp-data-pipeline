@@ -169,6 +169,7 @@ class ProcessingConfig:
 @dataclass
 class LegacyFTPConfig:
     host: str = "ftp.oldvendor.com"
+    port: int = 21
     user: str = "acme_upload"
     password: str = ""
     remote_dir: str = "/outbound/daily"
@@ -196,7 +197,7 @@ class PipelineConfig:
     thresholds: AlertThresholds = field(default_factory=AlertThresholds)
     processing: ProcessingConfig = field(default_factory=ProcessingConfig)
     legacy_ftp: LegacyFTPConfig = field(default_factory=LegacyFTPConfig)
-    logging: LoggingConfig = field(default_factory=LoggingConfig)
+    log_cfg: LoggingConfig = field(default_factory=LoggingConfig)
 
 
 # ---------------------------------------------------------------------------
@@ -255,6 +256,7 @@ def load_config(
 
     # --- Paths ---
     paths = PathsConfig(
+        base_dir=Path(_env("PIPELINE_BASE_DIR", str(base))),
         input_dir=Path(_env("DATA_INPUT_DIR", "/opt/acmecorp/data/incoming")),
         output_dir=Path(_env("DATA_OUTPUT_DIR", "/opt/acmecorp/data/processed")),
         archive_dir=Path(_env("DATA_ARCHIVE_DIR", "/opt/acmecorp/data/archive")),
@@ -317,6 +319,7 @@ def load_config(
     # --- Legacy FTP ---
     legacy_ftp = LegacyFTPConfig(
         host=_env("LEGACY_FTP_HOST", "ftp.oldvendor.com"),
+        port=int(_env("LEGACY_FTP_PORT", "21")),
         user=_env("LEGACY_FTP_USER", "acme_upload"),
         password=_env("LEGACY_FTP_PASS", ""),
         data_format=_env("LEGACY_DATA_FORMAT", "fixed_width"),
@@ -340,5 +343,5 @@ def load_config(
         thresholds=thresholds,
         processing=processing,
         legacy_ftp=legacy_ftp,
-        logging=logging_cfg,
+        log_cfg=logging_cfg,
     )

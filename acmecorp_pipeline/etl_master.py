@@ -290,7 +290,7 @@ def run_etl(config: PipelineConfig) -> int:
 def main() -> None:
     """CLI entry point — replaces the ``etl_master.sh`` cron invocation."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     with Lock("etl_master", timeout=300):
         exit_code = run_etl(cfg)

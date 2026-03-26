@@ -68,7 +68,7 @@ class TestFixVendorData:
         output_file = tmp_path / "out.csv"
         input_file.write_text(
             "order_id,total_amount,state\n"
-            "ORD-1,1.234,56,California\n"
+            'ORD-1,"1.234,56",California\n'
             "ORD-2,100.00,IL\n"
         )
 
@@ -77,6 +77,8 @@ class TestFixVendorData:
 
         lines = output_file.read_text().splitlines()
         assert len(lines) == 3  # header + 2 rows
+        # Verify comma-decimal was converted to dot-decimal
+        assert "1.234.56" in lines[1]
 
     def test_unknown_vendor(self, tmp_path: Path) -> None:
         input_file = tmp_path / "in.csv"

@@ -91,11 +91,14 @@ def reprocess_date_range(
                 for endpoint in endpoints:
                     # Delete existing data if requested
                     if delete_existing:
-                        log.info("Deleting existing data for %s/%s on %s", vendor, endpoint, day_str)
+                        # Table name is built from hardcoded VENDORS/ENDPOINTS
+                        # constants — safe to interpolate.
+                        table = f"raw_ingest.{vendor.replace('-', '_')}_{endpoint}"
+                        log.info("Deleting existing data for %s on %s", table, day_str)
                         run_query(
                             config,
-                            f"DELETE FROM raw_ingest.{vendor.replace('-', '_')}_{endpoint} "
-                            f"WHERE _load_date = '{day_str}';",
+                            f"DELETE FROM {table} WHERE _load_date = %s;",
+                            params=(day_str,),
                             profile="production",
                         )
 
@@ -157,7 +160,7 @@ def main() -> None:
         sys.exit(1)
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     start_date = sys.argv[1]
     end_date = sys.argv[2]

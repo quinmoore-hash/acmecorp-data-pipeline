@@ -100,7 +100,7 @@ def main() -> None:
     from acmecorp_pipeline.logging_utils import setup_logging
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     result = json_to_csv(Path(sys.argv[1]), Path(sys.argv[2]))
     sys.exit(0 if result >= 0 else 1)

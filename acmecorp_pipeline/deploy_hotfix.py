@@ -173,7 +173,7 @@ def main() -> None:
         deploy_hotfix.py rollback
     """
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     if len(sys.argv) < 2:
         print(f"Usage: {sys.argv[0]} {{deploy|rollback}} [options]")

@@ -90,9 +90,27 @@ class DQReport:
         return sum(1 for r in self.results if r.status == "FAIL")
 
 
-def _query_scalar(config: PipelineConfig, sql: str) -> str:
+# Tables that are allowed in dynamic SQL queries (allowlist).
+_ALLOWED_TABLES = frozenset(TABLES)
+_ALLOWED_NULL_TABLES = frozenset(t for t, _c, _p in NULL_CHECKS)
+_ALLOWED_DUP_TABLES = frozenset(t for t, _c in DUPLICATE_CHECKS)
+_ALLOWED_FRESHNESS_TABLES = frozenset(FRESHNESS_TABLES)
+
+
+def _validate_identifier(value: str, allowlist: frozenset[str]) -> str:
+    """Validate that *value* is in *allowlist*; raise ValueError otherwise."""
+    if value not in allowlist:
+        raise ValueError(f"Identifier not in allowlist: {value!r}")
+    return value
+
+
+def _query_scalar(
+    config: PipelineConfig,
+    sql: str,
+    params: tuple[object, ...] | None = None,
+) -> str:
     """Run a single-value query and return the result as a stripped string."""
-    rows = run_query(config, sql, profile="production")
+    rows = run_query(config, sql, params=params, profile="production")
     if rows and rows[0]:
         return str(rows[0][0]).strip()
     return "0"
@@ -109,19 +127,22 @@ def check_row_counts(config: PipelineConfig, report: DQReport) -> None:
     check_date = report.check_date
 
     for table in TABLES:
+        _validate_identifier(table, _ALLOWED_TABLES)
         today_count = int(_query_scalar(
             config,
-            f"SELECT COUNT(*) FROM {table} WHERE _load_date = '{check_date}';",
+            f"SELECT COUNT(*) FROM {table} WHERE _load_date = %s;",
+            (check_date,),
         ))
         avg_count = int(_query_scalar(
             config,
             f"""SELECT COALESCE(ROUND(AVG(cnt)), 0) FROM (
                 SELECT _load_date, COUNT(*) as cnt
                 FROM {table}
-                WHERE _load_date >= '{check_date}'::date - interval '7 days'
-                  AND _load_date < '{check_date}'
+                WHERE _load_date >= %s::date - interval '7 days'
+                  AND _load_date < %s
                 GROUP BY _load_date
             ) t;""",
+            (check_date, check_date),
         ))
 
         if avg_count == 0:
@@ -157,12 +178,14 @@ def check_null_rates(config: PipelineConfig, report: DQReport) -> None:
     check_date = report.check_date
 
     for table, column, max_null_pct in NULL_CHECKS:
+        _validate_identifier(table, _ALLOWED_NULL_TABLES)
         result = _query_scalar(
             config,
             f"""SELECT ROUND(100.0 * SUM(CASE WHEN "{column}" IS NULL OR "{column}" = '' THEN 1 ELSE 0 END)
                 / NULLIF(COUNT(*), 0), 2)
             FROM {table}
-            WHERE _load_date = '{check_date}';""",
+            WHERE _load_date = %s;""",
+            (check_date,),
         )
         null_pct = float(result) if result else 0.0
         null_pct_int = int(null_pct)
@@ -185,15 +208,17 @@ def check_duplicates(config: PipelineConfig, report: DQReport) -> None:
     check_date = report.check_date
 
     for table, key_col in DUPLICATE_CHECKS:
+        _validate_identifier(table, _ALLOWED_DUP_TABLES)
         dup_count = int(_query_scalar(
             config,
             f"""SELECT COUNT(*) FROM (
                 SELECT "{key_col}", COUNT(*)
                 FROM {table}
-                WHERE _load_date = '{check_date}'
+                WHERE _load_date = %s
                 GROUP BY "{key_col}"
                 HAVING COUNT(*) > 1
             ) t;""",
+            (check_date,),
         ))
 
         if dup_count > 0:
@@ -214,9 +239,11 @@ def check_freshness(config: PipelineConfig, report: DQReport) -> None:
     check_date = report.check_date
 
     for table in FRESHNESS_TABLES:
+        _validate_identifier(table, _ALLOWED_FRESHNESS_TABLES)
         has_today = _query_scalar(
             config,
-            f"SELECT EXISTS(SELECT 1 FROM {table} WHERE _load_date = '{check_date}');",
+            f"SELECT EXISTS(SELECT 1 FROM {table} WHERE _load_date = %s);",
+            (check_date,),
         )
 
         if has_today in ("t", "true", "True"):
@@ -242,8 +269,9 @@ def check_business_rules(config: PipelineConfig, report: DQReport) -> None:
     # Negative amounts
     neg_amounts = int(_query_scalar(
         config,
-        f"""SELECT COUNT(*) FROM raw_ingest.vendor_a_orders
-        WHERE _load_date = '{check_date}' AND total_amount::numeric < 0;""",
+        "SELECT COUNT(*) FROM raw_ingest.vendor_a_orders"
+        " WHERE _load_date = %s AND total_amount::numeric < 0;",
+        (check_date,),
     ))
     report.results.append(CheckResult(
         "biz_rule:negative_amounts",
@@ -254,8 +282,9 @@ def check_business_rules(config: PipelineConfig, report: DQReport) -> None:
     # Future ship dates
     future_dates = int(_query_scalar(
         config,
-        f"""SELECT COUNT(*) FROM raw_ingest.vendor_c_shipments
-        WHERE _load_date = '{check_date}' AND ship_date::date > CURRENT_DATE;""",
+        "SELECT COUNT(*) FROM raw_ingest.vendor_c_shipments"
+        " WHERE _load_date = %s AND ship_date::date > CURRENT_DATE;",
+        (check_date,),
     ))
     report.results.append(CheckResult(
         "biz_rule:future_ship_dates",
@@ -266,8 +295,9 @@ def check_business_rules(config: PipelineConfig, report: DQReport) -> None:
     # Transaction amount outliers
     outliers = int(_query_scalar(
         config,
-        f"""SELECT COUNT(*) FROM raw_ingest.vendor_b_transactions
-        WHERE _load_date = '{check_date}' AND ABS(amount::numeric) > 1000000;""",
+        "SELECT COUNT(*) FROM raw_ingest.vendor_b_transactions"
+        " WHERE _load_date = %s AND ABS(amount::numeric) > 1000000;",
+        (check_date,),
     ))
     report.results.append(CheckResult(
         "biz_rule:amount_outliers",
@@ -360,7 +390,7 @@ def run_data_quality_checks(
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     run_id = sys.argv[1] if len(sys.argv) > 1 else None
     exit_code = run_data_quality_checks(cfg, run_id)

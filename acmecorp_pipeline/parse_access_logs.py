@@ -164,7 +164,7 @@ def main() -> None:
         sys.exit(1)
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     output_file = Path(sys.argv[1])
     input_files = [Path(f) for f in sys.argv[2:]]

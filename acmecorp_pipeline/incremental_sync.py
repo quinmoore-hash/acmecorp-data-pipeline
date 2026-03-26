@@ -27,12 +27,8 @@ def run_incremental_sync(config: PipelineConfig) -> int:
 
     Returns the number of files processed.
     """
-    try:
-        lock = Lock("incremental_sync", timeout=30)
-        if not lock.acquire():
-            log.info("Incremental sync already running, skipping")
-            return 0
-    except RuntimeError:
+    lock = Lock("incremental_sync", timeout=30)
+    if not lock.acquire():
         log.info("Incremental sync already running, skipping")
         return 0
 
@@ -96,7 +92,7 @@ def run_incremental_sync(config: PipelineConfig) -> int:
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
     run_incremental_sync(cfg)
     sys.exit(0)
 

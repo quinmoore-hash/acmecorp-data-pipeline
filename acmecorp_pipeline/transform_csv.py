@@ -135,7 +135,7 @@ def main() -> None:
     output_file = Path(sys.argv[2])
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     ok = transform_csv(input_file, output_file, delimiter=cfg.processing.csv_delimiter)
     sys.exit(0 if ok else 1)

@@ -111,15 +111,22 @@ def _fix_vendor_c(rows: list[dict[str, str]], header: list[str]) -> list[dict[st
 
 
 def _deduplicate(rows: list[dict[str, str]], key_field: str) -> list[dict[str, str]]:
-    """Remove duplicate rows based on a key field, keeping the last occurrence."""
+    """Remove duplicate rows based on a key field, keeping the last occurrence.
+
+    Rows with an empty or missing key are always preserved.
+    """
     seen: dict[str, int] = {}
+    no_key_indices: list[int] = []
     for idx, row in enumerate(rows):
         key = row.get(key_field, "")
         if key:
             seen[key] = idx
+        else:
+            no_key_indices.append(idx)
 
-    if len(seen) < len(rows):
-        deduped = [rows[idx] for idx in sorted(seen.values())]
+    keep_indices = sorted(set(no_key_indices) | set(seen.values()))
+    if len(keep_indices) < len(rows):
+        deduped = [rows[idx] for idx in keep_indices]
         log.info("Deduplicated: %d -> %d rows (key=%s)", len(rows), len(deduped), key_field)
         return deduped
 
@@ -208,7 +215,7 @@ def main() -> None:
         sys.exit(1)
 
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     vendor = sys.argv[1]
     input_file = Path(sys.argv[2])

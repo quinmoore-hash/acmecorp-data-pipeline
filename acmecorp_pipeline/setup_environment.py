@@ -127,7 +127,7 @@ def setup_environment(config: PipelineConfig, install_deps: bool = True) -> bool
     print(f"  Input dir:   {config.paths.input_dir}")
     print(f"  S3 bucket:   {config.s3.bucket}")
     print(f"  DB profiles: {', '.join(config.db_profiles.keys())}")
-    print(f"  Log level:   {config.logging.log_level}")
+    print(f"  Log level:   {config.log_cfg.log_level}")
 
     print("\n" + "=" * 60)
     print("Setup complete!")
@@ -139,7 +139,7 @@ def setup_environment(config: PipelineConfig, install_deps: bool = True) -> bool
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
 
     install = "--no-install" not in sys.argv
     ok = setup_environment(cfg, install_deps=install)

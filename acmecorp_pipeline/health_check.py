@@ -160,7 +160,7 @@ def run_health_check(config: PipelineConfig) -> int:
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
     exit_code = run_health_check(cfg)
     sys.exit(exit_code)
 

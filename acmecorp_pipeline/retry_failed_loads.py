@@ -115,7 +115,7 @@ def retry_failed_loads(config: PipelineConfig) -> int:
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
     retry_failed_loads(cfg)
     sys.exit(0)
 

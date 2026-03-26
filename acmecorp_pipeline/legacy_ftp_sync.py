@@ -190,7 +190,7 @@ def run_ftp_sync(config: PipelineConfig) -> bool:
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
     ok = run_ftp_sync(cfg)
     sys.exit(0 if ok else 1)
 

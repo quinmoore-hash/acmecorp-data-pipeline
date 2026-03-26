@@ -92,7 +92,7 @@ def run_cleanup(config: PipelineConfig) -> None:
     total_removed += n
 
     # 5. Log files — remove logs older than log_retention_days
-    log_days = config.logging.retention_days
+    log_days = config.log_cfg.retention_days
     n = _remove_old_files(config.paths.log_dir, log_days, "*.log")
     log.info("Log files: removed %d files older than %d days", n, log_days)
     total_removed += n
@@ -137,7 +137,7 @@ def run_cleanup(config: PipelineConfig) -> None:
 def main() -> None:
     """CLI entry point."""
     cfg = load_config()
-    setup_logging(cfg.paths.log_dir, cfg.logging.log_level)
+    setup_logging(cfg.paths.log_dir, cfg.log_cfg.log_level)
     run_cleanup(cfg)
 
 
