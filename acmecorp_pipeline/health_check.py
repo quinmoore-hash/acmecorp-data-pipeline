@@ -119,9 +119,11 @@ def run_health_check(config: PipelineConfig) -> int:
                 try:
                     os.kill(pid, 0)
                     results.append((f"lock:{lock_file.stem}", "OK", f"pid={pid} running"))
-                except (ProcessLookupError, PermissionError):
+                except ProcessLookupError:
                     results.append((f"lock:{lock_file.stem}", "WARNING", f"stale lock (pid={pid})"))
                     warning = True
+                except PermissionError:
+                    results.append((f"lock:{lock_file.stem}", "OK", f"pid={pid} running (different user)"))
             except (ValueError, OSError):
                 results.append((f"lock:{lock_file.stem}", "WARNING", "unreadable lock file"))
                 warning = True

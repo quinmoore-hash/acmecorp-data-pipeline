@@ -104,7 +104,7 @@ def load_warehouse(
         return False
 
     # Create staging table with all TEXT columns
-    col_defs = ", ".join(f'"{col}" TEXT' for col in header)
+    col_defs = ", ".join(f'"{ col.replace(chr(34), chr(34)+chr(34)) }" TEXT' for col in header)
     create_sql = f"CREATE TABLE {staging_table} ({col_defs});"
 
     run_query(config, f"DROP TABLE IF EXISTS {staging_table};", profile=profile)

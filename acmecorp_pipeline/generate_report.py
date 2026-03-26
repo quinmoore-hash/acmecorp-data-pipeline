@@ -21,9 +21,13 @@ from acmecorp_pipeline.s3_sync import s3_upload_file
 log = get_logger("generate_report")
 
 
-def _query_rows(config: PipelineConfig, sql: str) -> list[tuple[Any, ...]]:
+def _query_rows(
+    config: PipelineConfig,
+    sql: str,
+    params: tuple[object, ...] | None = None,
+) -> list[tuple[Any, ...]]:
     """Helper that returns an empty list instead of ``None``."""
-    return run_query(config, sql, profile="production") or []
+    return run_query(config, sql, params=params, profile="production") or []
 
 
 def _generate_summary(config: PipelineConfig, report_month: str) -> dict[str, Any]:
@@ -54,7 +58,8 @@ def _generate_summary(config: PipelineConfig, report_month: str) -> dict[str, An
         rows = _query_rows(
             config,
             f"SELECT COUNT(*) FROM {table} "
-            f"WHERE _load_date >= '{start_date}' AND _load_date < '{end_date}';",
+            "WHERE _load_date >= %s AND _load_date < %s;",
+            params=(start_date, end_date),
         )
         table_counts[table] = int(rows[0][0]) if rows else 0
     summary["table_counts"] = table_counts
@@ -63,19 +68,21 @@ def _generate_summary(config: PipelineConfig, report_month: str) -> dict[str, An
     # Daily load counts
     rows = _query_rows(
         config,
-        f"""SELECT _load_date, COUNT(*)
+        """SELECT _load_date, COUNT(*)
         FROM raw_ingest.vendor_a_orders
-        WHERE _load_date >= '{start_date}' AND _load_date < '{end_date}'
+        WHERE _load_date >= %s AND _load_date < %s
         GROUP BY _load_date ORDER BY _load_date;""",
+        params=(start_date, end_date),
     )
     summary["daily_loads"] = [(str(r[0]), int(r[1])) for r in rows]
 
     # Data quality summary
     rows = _query_rows(
         config,
-        f"""SELECT COUNT(*) FROM raw_ingest.vendor_a_orders
-        WHERE _load_date >= '{start_date}' AND _load_date < '{end_date}'
+        """SELECT COUNT(*) FROM raw_ingest.vendor_a_orders
+        WHERE _load_date >= %s AND _load_date < %s
         AND (order_id IS NULL OR order_id = '');""",
+        params=(start_date, end_date),
     )
     summary["null_order_ids"] = int(rows[0][0]) if rows else 0
 

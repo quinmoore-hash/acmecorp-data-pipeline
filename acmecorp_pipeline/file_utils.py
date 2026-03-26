@@ -194,6 +194,10 @@ def wait_for_file(
             break
         prev_size = cur_size
         time.sleep(2)
+        elapsed += 2
+        if elapsed >= timeout:
+            log.error("Timeout waiting for file to finish writing: %s", filepath)
+            return False
 
     log.info("File ready: %s (%s)", filepath, file_size_human(filepath))
     return True
